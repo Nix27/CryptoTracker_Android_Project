@@ -1,21 +1,20 @@
 package hr.algebra.cryptotracker
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
-import android.view.animation.AnimationUtils
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
+import hr.algebra.cryptotracker.api.CryptoWorker
 import hr.algebra.cryptotracker.databinding.ActivitySplashScreenBinding
 import hr.algebra.cryptotracker.framework.applyAnimation
-import hr.algebra.cryptotracker.framework.startActivity
-import java.util.Objects
+import hr.algebra.cryptotracker.framework.callDelayed
+import hr.algebra.cryptotracker.framework.isOnline
 
 private const val DELAY = 3000L
 
+const val DATA_IMPORTED = "hr.algebra.cryptotracker.data_imported"
 class SplashScreenActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySplashScreenBinding
 
@@ -24,19 +23,58 @@ class SplashScreenActivity : AppCompatActivity() {
         binding = ActivitySplashScreenBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupListeners()
         startAnimation()
-        redirect()
+        callDelayed(DELAY) { redirect() }
+    }
+
+    private fun setupListeners() {
+        binding.btnRetry.setOnClickListener {
+            startAnimation()
+            callDelayed(DELAY) { redirect() }
+        }
     }
 
     private fun startAnimation() {
+        if(binding.flAnimatedImages.visibility == View.GONE){
+            binding.llNoInternetConnection.visibility = View.GONE
+            binding.flAnimatedImages.visibility = View.VISIBLE
+        }
+
         binding.ivCoinImage.applyAnimation(R.anim.scale_y)
         binding.ivLineImage.applyAnimation(R.anim.scale_x)
     }
 
     private fun redirect() {
-        Handler(Looper.getMainLooper()).postDelayed(
-            { startActivity<HostActivity>() },
-            DELAY
-        )
+        /*if (getBooleanPreference(DATA_IMPORTED)) {
+            callDelayed(DELAY) { startActivity<HostActivity>() }
+        } else {
+            if(isOnline()){
+                WorkManager.getInstance(this).apply {
+                    enqueueUniqueWork(
+                        DATA_IMPORTED,
+                        ExistingWorkPolicy.KEEP,
+                        OneTimeWorkRequest.from(CryptoWorker::class.java)
+                    )
+                }
+            } else {
+                binding.flAnimatedImages.visibility = View.GONE
+                binding.ivNoInternetImage.visibility = View.VISIBLE
+                callDelayed(DELAY) { finish() }
+            }
+        }*/
+
+        if(isOnline()){
+            WorkManager.getInstance(this).apply {
+                enqueueUniqueWork(
+                    DATA_IMPORTED,
+                    ExistingWorkPolicy.KEEP,
+                    OneTimeWorkRequest.from(CryptoWorker::class.java)
+                )
+            }
+        } else {
+            binding.flAnimatedImages.visibility = View.GONE
+            binding.llNoInternetConnection.visibility = View.VISIBLE
+        }
     }
 }

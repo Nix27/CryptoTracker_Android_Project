@@ -11,6 +11,8 @@
     tools:context=".SplashScreenActivity">
 
     <FrameLayout
+        android:id="@+id/flAnimatedImages"
+        android:visibility="visible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -28,5 +30,28 @@
             android:layout_height="wrap_content" />
 
     </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/llNoInternetConnection"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/ivNoInternetImage"
+            android:src="@drawable/no_internet_image"
+            android:layout_width="@dimen/_200dp"
+            android:layout_height="@dimen/_200dp" />
+
+        <Button
+            android:id="@+id/btnRetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/retry" />
+
+    </LinearLayout>
+
 
 </LinearLayout>
