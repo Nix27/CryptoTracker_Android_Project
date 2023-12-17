@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:startDestination="@id/menuCurrencies"
+    android:id="@+id/fragments">
+
+    <fragment
+        android:id="@+id/menuCurrencies"
+        android:name="hr.algebra.cryptotracker.fragment.CurrenciesFragment"
+        android:label="@string/currencies"/>
+
+    <fragment
+        android:id="@+id/menuAbout"
+        android:name="hr.algebra.cryptotracker.fragment.AboutFragment"
+        android:label="@string/about"/>
+
+</navigation>

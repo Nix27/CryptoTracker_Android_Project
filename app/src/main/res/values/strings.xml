@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">CryptoTracker</string>
     <string name="retry">Retry</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="currencies">Currencies</string>
+    <string name="about">About</string>
+    <string name="menu">Menu</string>
+    <string name="exit">Exit</string>
+    <string name="are_you_sure">Are you sure?</string>
 </resources>

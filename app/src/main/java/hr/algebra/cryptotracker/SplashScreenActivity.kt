@@ -46,24 +46,6 @@ class SplashScreenActivity : AppCompatActivity() {
     }
 
     private fun redirect() {
-        /*if (getBooleanPreference(DATA_IMPORTED)) {
-            callDelayed(DELAY) { startActivity<HostActivity>() }
-        } else {
-            if(isOnline()){
-                WorkManager.getInstance(this).apply {
-                    enqueueUniqueWork(
-                        DATA_IMPORTED,
-                        ExistingWorkPolicy.KEEP,
-                        OneTimeWorkRequest.from(CryptoWorker::class.java)
-                    )
-                }
-            } else {
-                binding.flAnimatedImages.visibility = View.GONE
-                binding.ivNoInternetImage.visibility = View.VISIBLE
-                callDelayed(DELAY) { finish() }
-            }
-        }*/
-
         if(isOnline()){
             WorkManager.getInstance(this).apply {
                 enqueueUniqueWork(
