@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import hr.algebra.cryptotracker.CryptoReceiver
 import hr.algebra.cryptotracker.framework.sendBroadcast
-import hr.algebra.cryptotracker.handler.downloadImageAndStore
 import hr.algebra.cryptotracker.model.Currency
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +34,7 @@ class CryptoFetcher(private val context: Context) {
                 call: Call<List<CurrencyItem>>,
                 response: Response<List<CurrencyItem>>
             ) {
-                response.body()?.let { populateItems(it) }
+                response.body()?.let { getCurrencies(it) }
             }
 
             override fun onFailure(call: Call<List<CurrencyItem>>, t: Throwable) {
@@ -44,18 +43,17 @@ class CryptoFetcher(private val context: Context) {
         })
     }
 
-    private fun populateItems(currencies: List<CurrencyItem>) {
+    private fun getCurrencies(currencies: List<CurrencyItem>) {
         val items = mutableListOf<Currency>()
         val scope = CoroutineScope(Dispatchers.IO)
 
         scope.launch {
             currencies.forEach {
-                val imagePath = downloadImageAndStore(context, it.image)
                 items.add(Currency(
                     null,
                     it.symbol,
                     it.name,
-                    imagePath ?: "",
+                    it.image,
                     it.current_price,
                     it.market_cap,
                     it.market_cap_rank,
