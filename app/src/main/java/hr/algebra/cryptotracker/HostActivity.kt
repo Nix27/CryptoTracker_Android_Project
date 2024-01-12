@@ -6,12 +6,18 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
+import hr.algebra.cryptotracker.api.CryptoFetcher
 import hr.algebra.cryptotracker.databinding.ActivityHostBinding
+import hr.algebra.cryptotracker.model.Currency
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class HostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHostBinding
+    private lateinit var currencies: List<Currency>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +32,9 @@ class HostActivity : AppCompatActivity() {
 
         initHamburgerMenu()
         initNavigation()
+        lifecycleScope.launch(Dispatchers.Main) {
+            currencies = CryptoFetcher(this@HostActivity).fetchCryptoCurrencies(100)
+        }
     }
 
     private fun initHamburgerMenu() {

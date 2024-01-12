@@ -8,6 +8,8 @@ import hr.algebra.cryptotracker.model.Currency
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,48 +28,46 @@ class CryptoFetcher(private val context: Context) {
         cryptoApi = retrofit.create(CryptoApi::class.java)
     }
 
-    fun fetchCryptoCurrencies(count: Int){
-        var request = cryptoApi.fetchCurrencies(vsCurrency = "usd", perPage = 100, page = 1)
+    suspend fun fetchCryptoCurrencies(count: Int): List<Currency> {
+        return suspendCancellableCoroutine {
+            var request = cryptoApi.fetchCurrencies(vsCurrency = "usd", perPage = count, page = 1)
 
-        request.enqueue(object : Callback<List<CurrencyItem>> {
-            override fun onResponse(
-                call: Call<List<CurrencyItem>>,
-                response: Response<List<CurrencyItem>>
-            ) {
-                response.body()?.let { getCurrencies(it) }
-            }
+            request.enqueue(object : Callback<List<CurrencyItem>> {
+                override fun onResponse(
+                    call: Call<List<CurrencyItem>>,
+                    response: Response<List<CurrencyItem>>
+                ) {
+                    response.body()?.let { getCurrencies(it) }
+                }
 
-            override fun onFailure(call: Call<List<CurrencyItem>>, t: Throwable) {
-                Log.e(javaClass.name, t.toString(), t)
-            }
-        })
+                override fun onFailure(call: Call<List<CurrencyItem>>, t: Throwable) {
+                    Log.e(javaClass.name, t.toString(), t)
+                }
+            })
+        }
     }
 
-    private fun getCurrencies(currencies: List<CurrencyItem>) {
-        val items = mutableListOf<Currency>()
-        val scope = CoroutineScope(Dispatchers.IO)
+    private fun getCurrencies(currencyItems: List<CurrencyItem>): List<Currency> {
+        val currencies = mutableListOf<Currency>()
 
-        scope.launch {
-            currencies.forEach {
-                items.add(Currency(
-                    null,
-                    it.symbol,
-                    it.name,
-                    it.image,
-                    it.current_price,
-                    it.market_cap,
-                    it.market_cap_rank,
-                    it.total_volume,
-                    it.ath,
-                    it.high_24h,
-                    it.low_24h,
-                    it.circulating_supply,
-                    it.total_supply,
-                    it.max_supply
-                ))
-            }
-
-            context.sendBroadcast<CryptoReceiver>()
+        currencyItems.forEach {
+            currencies.add(Currency(
+                it.symbol,
+                it.image,
+                it.name,
+                it.current_price,
+                it.market_cap,
+                it.market_cap_rank,
+                it.total_volume,
+                it.ath,
+                it.high_24h,
+                it.low_24h,
+                it.circulating_supply,
+                it.total_supply,
+                it.max_supply
+            ))
         }
+
+        return currencies
     }
 }
