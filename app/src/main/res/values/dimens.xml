@@ -9,4 +9,7 @@
     <dimen name="_162dp">162dp</dimen>
     <dimen name="_240dp">240dp</dimen>
     <dimen name="_32dp">32dp</dimen>
+    <dimen name="_8dp">8dp</dimen>
+    <dimen name="_10dp">10dp</dimen>
+    <dimen name="_25sp">25sp</dimen>
 </resources>

@@ -15,6 +15,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class CryptoFetcher(private val context: Context) {
     private val cryptoApi: CryptoApi
@@ -28,16 +30,18 @@ class CryptoFetcher(private val context: Context) {
         cryptoApi = retrofit.create(CryptoApi::class.java)
     }
 
-    suspend fun fetchCryptoCurrencies(count: Int): List<Currency> {
-        return suspendCancellableCoroutine {
-            var request = cryptoApi.fetchCurrencies(vsCurrency = "usd", perPage = count, page = 1)
+    suspend fun fetchCryptoCurrencies(vsCurrency: String, page: Int): List<Currency> {
+        return suspendCoroutine { continuation ->
+            var request = cryptoApi.fetchCurrencies(vsCurrency = vsCurrency, page = page)
 
             request.enqueue(object : Callback<List<CurrencyItem>> {
                 override fun onResponse(
                     call: Call<List<CurrencyItem>>,
                     response: Response<List<CurrencyItem>>
                 ) {
-                    response.body()?.let { getCurrencies(it) }
+                    response.body()?.let {
+                        continuation.resume(getCurrencies(it))
+                    }
                 }
 
                 override fun onFailure(call: Call<List<CurrencyItem>>, t: Throwable) {
@@ -53,8 +57,8 @@ class CryptoFetcher(private val context: Context) {
         currencyItems.forEach {
             currencies.add(Currency(
                 it.symbol,
-                it.image,
                 it.name,
+                it.image,
                 it.current_price,
                 it.market_cap,
                 it.market_cap_rank,

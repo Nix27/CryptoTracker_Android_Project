@@ -8,4 +8,5 @@
     <string name="menu">Menu</string>
     <string name="exit">Exit</string>
     <string name="are_you_sure">Are you sure?</string>
+    <string name="currency">Currency:</string>
 </resources>

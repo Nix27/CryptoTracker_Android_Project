@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="vs_currencies_array">
+        <item>Usd</item>
+        <item>Eur</item>
+    </string-array>
+</resources>

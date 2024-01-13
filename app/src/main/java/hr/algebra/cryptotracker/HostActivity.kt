@@ -32,9 +32,6 @@ class HostActivity : AppCompatActivity() {
 
         initHamburgerMenu()
         initNavigation()
-        lifecycleScope.launch(Dispatchers.Main) {
-            currencies = CryptoFetcher(this@HostActivity).fetchCryptoCurrencies(100)
-        }
     }
 
     private fun initHamburgerMenu() {
