@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:startDestination="@id/menuCurrencies"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@+id/menuCurrencies"
     android:id="@+id/fragments">
 
     <fragment
         android:id="@+id/menuCurrencies"
         android:name="hr.algebra.cryptotracker.fragment.CurrenciesFragment"
-        android:label="@string/currencies"/>
+        android:label="@string/currencies">
+
+        <action
+            android:id="@+id/action_CurrenciesFragment_to_CurrencyDetailsFragment"
+            app:destination="@+id/currencyDetailsFragment"/>
+
+    </fragment>
 
     <fragment
         android:id="@+id/menuAbout"
         android:name="hr.algebra.cryptotracker.fragment.AboutFragment"
         android:label="@string/about"/>
+
+    <fragment
+        android:id="@+id/currencyDetailsFragment"
+        android:name="hr.algebra.cryptotracker.fragment.CurrencyDetailsFragment"
+        android:label="@string/currency_details"
+        tools:layout="@layout/fragment_currency_details">
+
+        <action
+            android:id="@+id/action_CurrencyDetailsFragment_to_CurrenciesFragment"
+            app:destination="@+id/menuCurrencies"/>
+
+    </fragment>
 
 </navigation>

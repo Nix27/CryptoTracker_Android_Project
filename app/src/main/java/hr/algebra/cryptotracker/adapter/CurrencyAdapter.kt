@@ -1,6 +1,7 @@
 package hr.algebra.cryptotracker.adapter
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,12 +10,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import hr.algebra.cryptotracker.R
+import hr.algebra.cryptotracker.abstraction.Navigable
+import hr.algebra.cryptotracker.fragment.CURRENCY_ID
 import hr.algebra.cryptotracker.model.Currency
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
 
 class CurrencyAdapter(
     private val context: Context,
-    private val currencies: List<Currency>
+    private val currencies: List<Currency>,
+    private val navigable: Navigable
 ) : RecyclerView.Adapter<CurrencyAdapter.ViewHolder>() {
     class ViewHolder(currencyView: View) : RecyclerView.ViewHolder(currencyView) {
         private val ivCurrencyLogo = currencyView.findViewById<ImageView>(R.id.ivCurrencyLogo)
@@ -25,7 +29,7 @@ class CurrencyAdapter(
             tvCurrencySymbol.text = currency.symbol.uppercase()
             tvCurrentPrice.text = currency.current_price.toString()
             Picasso.get()
-                .load(currency.imagePath)
+                .load(R.mipmap.ic_launcher)
                 .error(R.mipmap.ic_launcher)
                 .transform(RoundedCornersTransformation(50, 5))
                 .into(ivCurrencyLogo)
@@ -42,7 +46,9 @@ class CurrencyAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemView.setOnClickListener {
-            // show currency details
+            navigable.navigate(Bundle().apply {
+                putString(CURRENCY_ID, currencies[position].id)
+            })
         }
 
         holder.bind(currencies[position])

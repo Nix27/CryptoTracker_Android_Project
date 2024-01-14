@@ -63,4 +63,6 @@ dependencies {
     // picasso
     implementation("com.squareup.picasso:picasso:2.71828")
     implementation("jp.wasabeef:picasso-transformations:2.4.0")
+
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }

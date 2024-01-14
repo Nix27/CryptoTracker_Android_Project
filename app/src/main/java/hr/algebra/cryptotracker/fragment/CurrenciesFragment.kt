@@ -7,16 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import hr.algebra.cryptotracker.R
+import hr.algebra.cryptotracker.abstraction.Navigable
 import hr.algebra.cryptotracker.adapter.CurrencyAdapter
 import hr.algebra.cryptotracker.api.CryptoFetcher
 import hr.algebra.cryptotracker.databinding.FragmentCurrenciesBinding
 import hr.algebra.cryptotracker.model.Currency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class CurrenciesFragment : Fragment() {
+class CurrenciesFragment : Fragment(), Navigable {
     private lateinit var binding: FragmentCurrenciesBinding
     private lateinit var currencies: List<Currency>
     override fun onCreateView(
@@ -31,7 +34,7 @@ class CurrenciesFragment : Fragment() {
     private fun setupListeners() {
         binding.spCurrencyChooser.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(adapterView: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                refreshRecyclerView(adapterView?.getItemAtPosition(position).toString(), 1)
+                // refresh recycler view
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -45,12 +48,18 @@ class CurrenciesFragment : Fragment() {
     }
 
     private fun refreshRecyclerView(vsCurrency: String, page: Int) {
-        lifecycleScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.IO) {
             currencies = CryptoFetcher(requireContext()).fetchCryptoCurrencies(vsCurrency, page)
-            binding.rvCurrencies.apply {
-                layoutManager = LinearLayoutManager(requireContext())
-                adapter = CurrencyAdapter(requireContext(), currencies)
+            withContext(Dispatchers.Main) {
+                binding.rvCurrencies.apply {
+                    layoutManager = LinearLayoutManager(requireContext())
+                    adapter = CurrencyAdapter(requireContext(), currencies, this@CurrenciesFragment)
+                }
             }
         }
+    }
+
+    override fun navigate(bundle: Bundle) {
+        findNavController().navigate(R.id.action_CurrenciesFragment_to_CurrencyDetailsFragment, bundle)
     }
 }

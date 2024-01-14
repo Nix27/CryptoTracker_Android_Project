@@ -56,6 +56,7 @@ class CryptoFetcher(private val context: Context) {
 
         currencyItems.forEach {
             currencies.add(Currency(
+                it.id,
                 it.symbol,
                 it.name,
                 it.image,

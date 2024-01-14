@@ -1,6 +1,7 @@
 package hr.algebra.cryptotracker.model
 
 data class Currency(
+    val id: String,
     val symbol : String,
     val name : String,
     val imagePath : String,
