@@ -1,7 +1,7 @@
 package hr.algebra.cryptotracker.api
 
 import android.util.Log
-import hr.algebra.cryptotracker.formatTimestampToTime
+import hr.algebra.cryptotracker.formatter.formatTimestampToTime
 import hr.algebra.cryptotracker.model.Currency
 import hr.algebra.cryptotracker.model.CurrencyPrice
 import kotlinx.coroutines.suspendCancellableCoroutine

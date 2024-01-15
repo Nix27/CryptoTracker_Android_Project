@@ -52,7 +52,7 @@
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/lcPrice"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="@dimen/_200dp" />
 
         <LinearLayout
             android:orientation="vertical"

@@ -7,15 +7,30 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.AxisBase
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.components.YAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ValueFormatter
 import com.squareup.picasso.Picasso
 import hr.algebra.cryptotracker.R
 import hr.algebra.cryptotracker.databinding.FragmentCurrencyDetailsBinding
+import hr.algebra.cryptotracker.formatter.formatStringTimeToTimeStamp
 import hr.algebra.cryptotracker.model.Currency
+import hr.algebra.cryptotracker.model.CurrencyPrice
 import hr.algebra.cryptotracker.viewmodel.CurrenciesViewModel
 import hr.algebra.cryptotracker.viewmodel.CurrencyDetailsViewModel
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 const val CURRENCY_ID = "hr.algebra.cryptotracker.fragment.currency_id"
 class CurrencyDetailsFragment : Fragment() {
@@ -31,18 +46,48 @@ class CurrencyDetailsFragment : Fragment() {
     ): View? {
         binding = FragmentCurrencyDetailsBinding.inflate(inflater, container, false)
         setupListeners()
-        priceChart = binding.lcPrice
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = arguments?.getString(CURRENCY_ID)!!
+
         viewModel.getCurrencyDetails(id)
+        viewModel.getCurrencyPrices(id)
+
         viewModel.currencyDetails.observe(viewLifecycleOwner) {
-            if(it != null) currency = it
-            bindCurrency()
+            if(it != null)  {
+                currency = it
+                bindCurrency()
+            }
         }
+
+        viewModel.currencyPrices.observe(viewLifecycleOwner) {
+            if(it != null) setupPriceChart()
+        }
+    }
+
+    private fun setupPriceChart() {
+        priceChart = binding.lcPrice
+        val entries = getChartPrices(viewModel.currencyPrices.value!!)
+        val lineDataSet = LineDataSet(entries, "Price")
+        val lineData = LineData(lineDataSet)
+        priceChart.data = lineData
+
+        val xAxis: XAxis = priceChart.xAxis
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+
+        val yAxis: YAxis = priceChart.getAxis(YAxis.AxisDependency.RIGHT)
+        yAxis.isEnabled = false
+        /*xAxis.valueFormatter = object : ValueFormatter() {
+            private val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            override fun getAxisLabel(value: Float, axis: AxisBase?): String {
+                return dateFormat.format(Date(value.toLong()))
+            }
+        }*/
+
+        priceChart.invalidate()
     }
 
     private fun setupListeners() {
@@ -66,5 +111,15 @@ class CurrencyDetailsFragment : Fragment() {
         binding.tvCirculatingSupply.text = currency.circulating_supply.toString()
         binding.tvTotalSupply.text = currency.total_supply.toString()
         binding.tvMaxSupply.text = if(currency.max_supply != null) currency.max_supply.toString() else ""
+    }
+
+    private fun getChartPrices(prices: List<CurrencyPrice>) : List<Entry> {
+        val chartPrices = mutableListOf<Entry>()
+
+        prices.forEach {
+            chartPrices.add(Entry(formatStringTimeToTimeStamp(it.time).toDouble().toFloat(), it.price.toFloat()))
+        }
+
+        return chartPrices
     }
 }
