@@ -8,19 +8,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
+import com.github.mikephil.charting.charts.LineChart
 import com.squareup.picasso.Picasso
 import hr.algebra.cryptotracker.R
 import hr.algebra.cryptotracker.databinding.FragmentCurrencyDetailsBinding
 import hr.algebra.cryptotracker.model.Currency
 import hr.algebra.cryptotracker.viewmodel.CurrenciesViewModel
+import hr.algebra.cryptotracker.viewmodel.CurrencyDetailsViewModel
 import jp.wasabeef.picasso.transformations.RoundedCornersTransformation
 
 const val CURRENCY_ID = "hr.algebra.cryptotracker.fragment.currency_id"
 class CurrencyDetailsFragment : Fragment() {
 
     private lateinit var binding: FragmentCurrencyDetailsBinding
-    private val viewModel: CurrenciesViewModel by activityViewModels()
+    private val viewModel = CurrencyDetailsViewModel()
     private lateinit var currency: Currency
+    private lateinit var priceChart: LineChart
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,14 +31,18 @@ class CurrencyDetailsFragment : Fragment() {
     ): View? {
         binding = FragmentCurrencyDetailsBinding.inflate(inflater, container, false)
         setupListeners()
+        priceChart = binding.lcPrice
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val id = arguments?.getString(CURRENCY_ID)!!
-        currency = viewModel.currencies.value!!.first { it.id == id }
-        bindCurrency()
+        viewModel.getCurrencyDetails(id)
+        viewModel.currencyDetails.observe(viewLifecycleOwner) {
+            if(it != null) currency = it
+            bindCurrency()
+        }
     }
 
     private fun setupListeners() {

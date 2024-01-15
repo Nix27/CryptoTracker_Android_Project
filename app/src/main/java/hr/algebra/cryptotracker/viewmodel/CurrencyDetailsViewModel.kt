@@ -10,22 +10,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CurrenciesViewModel : ViewModel() {
-    private val _currencies = MutableLiveData<List<Currency>>()
-    val currencies: LiveData<List<Currency>> get() = _currencies
+class CurrencyDetailsViewModel : ViewModel() {
+    private val _currencyDetails = MutableLiveData<Currency>()
+    val currencyDetails: LiveData<Currency> get() = _currencyDetails
 
-    init {
+    fun getCurrencyDetails(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val currenciesFromApi = CryptoFetcher().fetchCryptoCurrencies("usd", 1)
+            val currencyDetailsFromApi = CryptoFetcher().fetchCryptoCurrencyDetails(id, "usd")
             withContext(Dispatchers.Main) {
-                _currencies.value = currenciesFromApi
+                _currencyDetails.value = currencyDetailsFromApi
             }
         }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        // stop refreshing
-    }
-
 }

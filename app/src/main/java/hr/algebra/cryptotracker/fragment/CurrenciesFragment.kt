@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 class CurrenciesFragment : Fragment(), Navigable {
 
     private lateinit var binding: FragmentCurrenciesBinding
-    private val viewModel: CurrenciesViewModel by activityViewModels()
+    private val viewModel = CurrenciesViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
