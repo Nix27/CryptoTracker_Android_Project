@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,13 +17,16 @@ import hr.algebra.cryptotracker.adapter.CurrencyAdapter
 import hr.algebra.cryptotracker.api.CryptoFetcher
 import hr.algebra.cryptotracker.databinding.FragmentCurrenciesBinding
 import hr.algebra.cryptotracker.model.Currency
+import hr.algebra.cryptotracker.viewmodel.CurrenciesViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CurrenciesFragment : Fragment(), Navigable {
+
     private lateinit var binding: FragmentCurrenciesBinding
-    private lateinit var currencies: List<Currency>
+    private val viewModel: CurrenciesViewModel by activityViewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,17 +49,10 @@ class CurrenciesFragment : Fragment(), Navigable {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        refreshRecyclerView("usd", 1)
-    }
-
-    private fun refreshRecyclerView(vsCurrency: String, page: Int) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            currencies = CryptoFetcher(requireContext()).fetchCryptoCurrencies(vsCurrency, page)
-            withContext(Dispatchers.Main) {
-                binding.rvCurrencies.apply {
-                    layoutManager = LinearLayoutManager(requireContext())
-                    adapter = CurrencyAdapter(requireContext(), currencies, this@CurrenciesFragment)
-                }
+        viewModel.currencies.observe(viewLifecycleOwner) {
+            binding.rvCurrencies.apply {
+                layoutManager = LinearLayoutManager(requireContext())
+                adapter = CurrencyAdapter(requireContext(), it, this@CurrenciesFragment)
             }
         }
     }

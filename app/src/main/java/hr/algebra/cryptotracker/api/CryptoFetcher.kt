@@ -18,7 +18,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
-class CryptoFetcher(private val context: Context) {
+class CryptoFetcher {
     private val cryptoApi: CryptoApi
 
     init {
@@ -31,7 +31,7 @@ class CryptoFetcher(private val context: Context) {
     }
 
     suspend fun fetchCryptoCurrencies(vsCurrency: String, page: Int): List<Currency> {
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine  { continuation ->
             var request = cryptoApi.fetchCurrencies(vsCurrency = vsCurrency, page = page)
 
             request.enqueue(object : Callback<List<CurrencyItem>> {
@@ -48,6 +48,10 @@ class CryptoFetcher(private val context: Context) {
                     Log.e(javaClass.name, t.toString(), t)
                 }
             })
+
+            continuation.invokeOnCancellation {
+                request.cancel()
+            }
         }
     }
 
