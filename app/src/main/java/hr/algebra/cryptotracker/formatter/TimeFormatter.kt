@@ -6,7 +6,7 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoField
 
-private val FORMATTER = DateTimeFormatter.ofPattern("HH:mm:ss").withZone(ZoneId.of("Europe/Zagreb"))
+private val FORMATTER = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.of("Europe/Zagreb"))
 fun formatTimestampToTime(timestamp: Long): String {
     val ofEpochMilli = Instant.ofEpochMilli(timestamp)
     return FORMATTER.format(ofEpochMilli)

@@ -1,5 +1,6 @@
 package hr.algebra.cryptotracker.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -16,6 +17,7 @@ import com.github.mikephil.charting.components.YAxis
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.ColorFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.squareup.picasso.Picasso
 import hr.algebra.cryptotracker.R
@@ -70,22 +72,36 @@ class CurrencyDetailsFragment : Fragment() {
 
     private fun setupPriceChart() {
         priceChart = binding.lcPrice
+
         val entries = getChartPrices(viewModel.currencyPrices.value!!)
+
         val lineDataSet = LineDataSet(entries, "Price")
+        lineDataSet.color = Color.parseColor("#86DE37")
+        lineDataSet.lineWidth = 5f
+        lineDataSet.setDrawCircles(false)
+        lineDataSet.setDrawValues(false)
+
         val lineData = LineData(lineDataSet)
         priceChart.data = lineData
 
         val xAxis: XAxis = priceChart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
+        xAxis.textColor = Color.WHITE
 
-        val yAxis: YAxis = priceChart.getAxis(YAxis.AxisDependency.RIGHT)
-        yAxis.isEnabled = false
-        /*xAxis.valueFormatter = object : ValueFormatter() {
-            private val dateFormat = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+        xAxis.valueFormatter = object : ValueFormatter() {
+            private val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
             override fun getAxisLabel(value: Float, axis: AxisBase?): String {
                 return dateFormat.format(Date(value.toLong()))
             }
-        }*/
+        }
+
+        val yAxisLeft: YAxis = priceChart.getAxis(YAxis.AxisDependency.LEFT)
+        val yAxisRight: YAxis = priceChart.getAxis(YAxis.AxisDependency.RIGHT)
+        yAxisLeft.textColor = Color.WHITE
+        yAxisRight.textColor = Color.WHITE
+
+        priceChart.description.isEnabled = false
+        priceChart.legend.isEnabled = false
 
         priceChart.invalidate()
     }

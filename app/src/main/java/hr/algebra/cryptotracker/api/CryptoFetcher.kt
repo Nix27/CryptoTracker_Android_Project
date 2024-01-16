@@ -146,7 +146,7 @@ class CryptoFetcher {
     private fun getCurrencyChartDataPrices(currencyChartData: CurrencyChartData) : List<CurrencyPrice> {
         val currencyPrices = mutableListOf<CurrencyPrice>()
 
-        currencyChartData.prices.forEach {
+        currencyChartData.prices.takeLast(24).forEach {
             currencyPrices.add(CurrencyPrice(
                 formatTimestampToTime(it[0].toLong()),
                 it[1]

@@ -29,7 +29,7 @@ class CurrencyAdapter(
             tvCurrencySymbol.text = currency.symbol.uppercase()
             tvCurrentPrice.text = currency.current_price.toString()
             Picasso.get()
-                .load(R.mipmap.ic_launcher)
+                .load(currency.imagePath)
                 .error(R.mipmap.ic_launcher)
                 .transform(RoundedCornersTransformation(50, 5))
                 .into(ivCurrencyLogo)
