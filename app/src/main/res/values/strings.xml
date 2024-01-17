@@ -18,4 +18,5 @@
     <string name="user">User</string>
     <string name="username_already_exists">Username already exists!</string>
     <string name="user_name_is_required">User name is required!</string>
+    <string name="password_is_required">Password is required</string>
 </resources>

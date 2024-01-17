@@ -25,15 +25,15 @@ inline fun<reified T : Activity> Context.startActivity()
 inline fun<reified T : BroadcastReceiver> Context.sendBroadcast()
         = sendBroadcast(Intent(this, T::class.java))
 
-fun Context.setBooleanPreference(key: String, value: Boolean = true)
+fun Context.setStringPreference(key: String, value: String)
     = PreferenceManager.getDefaultSharedPreferences(this)
     .edit()
-    .putBoolean(key, value)
+    .putString(key, value)
     .apply()
 
-fun Context.getBooleanPreference(key:String)
+fun Context.getStringPreference(key:String)
     = PreferenceManager.getDefaultSharedPreferences(this)
-    .getBoolean(key, false)
+    .getString(key, "")
 
 fun callDelayed(delay: Long, work: () -> Unit) {
     Handler(Looper.getMainLooper()).postDelayed(

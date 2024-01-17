@@ -14,13 +14,14 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import hr.algebra.cryptotracker.R
 import hr.algebra.cryptotracker.databinding.FragmentRegisterBinding
+import hr.algebra.cryptotracker.enums.UserResponse
 import hr.algebra.cryptotracker.model.User
+import hr.algebra.cryptotracker.viewmodel.UserViewModel
 
 class RegisterFragment : Fragment() {
 
     private lateinit var binding: FragmentRegisterBinding
-    private lateinit var firebaseDatabase: FirebaseDatabase
-    private lateinit var databaseReference: DatabaseReference
+    private val viewModel = UserViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,36 +29,34 @@ class RegisterFragment : Fragment() {
     ): View? {
         binding = FragmentRegisterBinding.inflate(inflater, container, false)
         setupListeners()
-        firebaseDatabase = FirebaseDatabase.getInstance()
-        databaseReference = firebaseDatabase.reference.child("users")
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        viewModel.response.observe(viewLifecycleOwner) {
+            when(viewModel.response.value) {
+                UserResponse.SUCCESS -> findNavController().navigate(R.id.action_RegisterFragment_to_LoginFragment)
+                else -> Toast.makeText(requireContext(), viewModel.response.value.toString(), Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupListeners() {
         binding.btnRegister.setOnClickListener {
-            registerUser(binding.etUsername.text.toString().trim(), binding.etPassword.text.toString().trim())
+            val username = binding.etUsername.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
+
+            if(username.isNotEmpty() && password.isNotEmpty()){
+                viewModel.registerUser(username, password)
+            } else {
+                if(username.isEmpty()) binding.etUsername.error = getString(R.string.user_name_is_required)
+                if(password.isEmpty()) binding.etPassword.error = getString(R.string.password_is_required)
+            }
         }
 
         binding.btnBack.setOnClickListener {
             findNavController().navigate(R.id.action_RegisterFragment_to_LoginFragment)
         }
-    }
-
-    private fun registerUser(username: String, password: String) {
-        databaseReference.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(!snapshot.exists()) {
-                    val id = databaseReference.push().key
-                    val user = User(id, username, password)
-                    databaseReference.child(id!!).setValue(user)
-                } else {
-                    binding.etUsername.error = getString(R.string.username_already_exists)
-                }
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-                Toast.makeText(requireContext(), "Database Error: ${databaseError.message}", Toast.LENGTH_SHORT).show()
-            }
-        })
     }
 }

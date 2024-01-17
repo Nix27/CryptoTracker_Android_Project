@@ -4,7 +4,11 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import hr.algebra.cryptotracker.enums.UserResponse
 import hr.algebra.cryptotracker.model.User
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 private const val USERS_NODE = "users"
 
@@ -12,51 +16,43 @@ class UserRepositoryImpl : UserRepository {
 
     private val usersNode = FirebaseDatabase.getInstance().reference.child(USERS_NODE)
 
-    override fun registerUser(username: String, password: String): String {
-        var result = ""
-
-        usersNode.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(!snapshot.exists()) {
+    override suspend fun registerUser(newUser: User): UserResponse {
+        return withContext(Dispatchers.IO) {
+            val snapshot =
+                usersNode.orderByChild("username").equalTo(newUser.username).get().await()
+            try {
+                if (!snapshot.exists()) {
                     val id = usersNode.push().key
-                    val user = User(id, username, password)
-                    usersNode.child(id!!).setValue(user)
-                    result = "success"
+                    newUser.id = id
+                    usersNode.child(id!!).setValue(newUser)
+                    UserResponse.SUCCESS
                 } else {
-                    result = "User already exists!"
+                    UserResponse.EXISTS
                 }
+            } catch (error: Exception) {
+                UserResponse.ERROR
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                result = "Database error: ${error.message}"
-            }
-        })
-
-        return result
+        }
     }
 
-    override fun loginUser(username: String, password: String): String {
-        var result = ""
+    override suspend fun loginUser(user: User): UserResponse {
+        return withContext(Dispatchers.IO) {
+            val snapshot = usersNode.orderByChild("username").equalTo(user.username).get().await()
+            try {
+                if (snapshot.exists()) {
+                    val userFromDb = snapshot.children.first().getValue(User::class.java)
 
-        usersNode.orderByChild("username").equalTo(username).addListenerForSingleValueEvent(object : ValueEventListener{
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if(snapshot.exists()) {
-                    for(userSnapshot in snapshot.children) {
-                        val user = userSnapshot.getValue(User::class.java)
-
-                        if(user != null && user.password == password) {
-                            result = "success"
-                        }
+                    if (userFromDb != null && userFromDb.password == user.password) {
+                        UserResponse.SUCCESS
+                    } else {
+                        UserResponse.NOT_FOUND
                     }
+                } else {
+                    UserResponse.NOT_FOUND
                 }
+            } catch (error: Exception) {
+                UserResponse.ERROR
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                result = "Database error: ${error.message}"
-            }
-
-        })
-
-        return result
+        }
     }
 }
