@@ -8,6 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import hr.algebra.cryptotracker.api.CryptoFetcher
 import hr.algebra.cryptotracker.databinding.ActivityHostBinding
@@ -53,6 +54,10 @@ class HostActivity : AppCompatActivity() {
         when(item.itemId) {
             android.R.id.home -> {
                 toggleDrawer()
+                return true
+            }
+            R.id.menuUser -> {
+                findNavController(R.id.navigationController).navigate(R.id.action_CurrenciesFragment_to_LoginFragment)
                 return true
             }
             R.id.menuExit -> {

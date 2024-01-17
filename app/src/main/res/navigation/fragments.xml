@@ -2,24 +2,32 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@+id/menuCurrencies"
+    app:startDestination="@+id/currenciesFragment"
     android:id="@+id/fragments">
 
     <fragment
-        android:id="@+id/menuCurrencies"
+        android:id="@+id/currenciesFragment"
         android:name="hr.algebra.cryptotracker.fragment.CurrenciesFragment"
-        android:label="@string/currencies">
+        android:label="@string/currencies"
+        tools:layout="@layout/fragment_currencies">
 
         <action
             android:id="@+id/action_CurrenciesFragment_to_CurrencyDetailsFragment"
-            app:destination="@+id/currencyDetailsFragment"/>
+            app:destination="@+id/currencyDetailsFragment"
+            app:popUpTo="@+id/currenciesFragment"
+            app:popUpToInclusive="false"/>
+
+        <action
+            android:id="@+id/action_CurrenciesFragment_to_LoginFragment"
+            app:destination="@+id/loginFragment" />
 
     </fragment>
 
     <fragment
-        android:id="@+id/menuAbout"
+        android:id="@+id/aboutFragment"
         android:name="hr.algebra.cryptotracker.fragment.AboutFragment"
-        android:label="@string/about"/>
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about"/>
 
     <fragment
         android:id="@+id/currencyDetailsFragment"
@@ -29,7 +37,35 @@
 
         <action
             android:id="@+id/action_CurrencyDetailsFragment_to_CurrenciesFragment"
-            app:destination="@+id/menuCurrencies"/>
+            app:destination="@+id/currenciesFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="hr.algebra.cryptotracker.fragment.LoginFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_LoginFragment_to_RegisterFragment"
+            app:destination="@+id/registerFragment"/>
+
+        <action
+            android:id="@+id/action_LoginFragment_to_CurrenciesFragment"
+            app:destination="@+id/currenciesFragment"/>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="hr.algebra.cryptotracker.fragment.RegisterFragment"
+        android:label="Login"
+        tools:layout="@layout/fragment_register">
+
+        <action
+            android:id="@+id/action_RegisterFragment_to_LoginFragment"
+            app:destination="@+id/loginFragment"/>
 
     </fragment>
 
