@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import hr.algebra.cryptotracker.LOGGED_USER
 import hr.algebra.cryptotracker.R
@@ -34,7 +35,7 @@ class LoginFragment : Fragment() {
             when(userViewModel.response.value) {
                 CustomResponse.SUCCESS -> {
                     requireContext().setStringPreference(LOGGED_USER, binding.etUsername.text.toString().trim())
-                    findNavController().navigate(R.id.action_LoginFragment_to_CurrenciesFragment)
+                    findNavController().navigate(R.id.action_to_CurrenciesFragment)
                 }
                 else -> Toast.makeText(requireContext(), userViewModel.response.value!!.name, Toast.LENGTH_SHORT).show()
             }
@@ -55,7 +56,11 @@ class LoginFragment : Fragment() {
         }
 
         binding.tvGoToRegister.setOnClickListener {
-            findNavController().navigate(R.id.action_LoginFragment_to_RegisterFragment)
+            findNavController().navigate(R.id.action_to_RegisterFragment)
+        }
+
+        binding.btnBack.setOnClickListener {
+            findNavController().navigate(R.id.action_to_CurrenciesFragment)
         }
     }
 }

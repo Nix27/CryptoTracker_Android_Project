@@ -27,7 +27,7 @@ class CurrencyAdapter(
 
         fun bind(currency: Currency) {
             tvCurrencySymbol.text = currency.symbol.uppercase()
-            tvCurrentPrice.text = currency.current_price.toString()
+            tvCurrentPrice.text = "€${currency.current_price}"
             Picasso.get()
                 .load(currency.imagePath)
                 .error(R.mipmap.ic_launcher)

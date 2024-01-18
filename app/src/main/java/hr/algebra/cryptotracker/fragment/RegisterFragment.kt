@@ -31,7 +31,7 @@ class RegisterFragment : Fragment() {
         userViewModel.response.observe(viewLifecycleOwner) {
             when(userViewModel.response.value) {
                 CustomResponse.SUCCESS -> {
-                    findNavController().navigate(R.id.action_RegisterFragment_to_LoginFragment)
+                    findNavController().navigate(R.id.action_to_LoginFragment)
                 }
                 else -> Toast.makeText(requireContext(), userViewModel.response.value!!.name, Toast.LENGTH_SHORT).show()
             }
@@ -52,7 +52,7 @@ class RegisterFragment : Fragment() {
         }
 
         binding.btnBack.setOnClickListener {
-            findNavController().navigate(R.id.action_RegisterFragment_to_LoginFragment)
+            findNavController().navigate(R.id.action_to_LoginFragment)
         }
     }
 }

@@ -49,31 +49,6 @@ class CryptoFetcher {
         }
     }
 
-    suspend fun fetchCryptoCurrencyDetails(id: String, vsCurrency: String): Currency {
-        return suspendCancellableCoroutine  { continuation ->
-            val request = cryptoApi.fetchCurrencyDetails(id)
-
-            request.enqueue(object : Callback<List<CurrencyItem>> {
-                override fun onResponse(
-                    call: Call<List<CurrencyItem>>,
-                    response: Response<List<CurrencyItem>>
-                ) {
-                    response.body()?.let {
-                        continuation.resume(getCurrency(it))
-                    }
-                }
-
-                override fun onFailure(call: Call<List<CurrencyItem>>, t: Throwable) {
-                    Log.e(javaClass.name, t.toString(), t)
-                }
-            })
-
-            continuation.invokeOnCancellation {
-                request.cancel()
-            }
-        }
-    }
-
     suspend fun fetchCurrencyPriceData(id: String, vsCurrency: String, days: Int): List<CurrencyPrice> {
         return suspendCancellableCoroutine { continuation ->
             val request = cryptoApi.fetchCurrencyChartData(id, vsCurrency, days.toString())
@@ -124,25 +99,6 @@ class CryptoFetcher {
         return currencies
     }
 
-    private fun getCurrency(currencyItem: List<CurrencyItem>) : Currency {
-        return Currency(
-            currencyItem[0].id,
-            currencyItem[0].symbol,
-            currencyItem[0].name,
-            currencyItem[0].image,
-            currencyItem[0].current_price,
-            currencyItem[0].market_cap,
-            currencyItem[0].market_cap_rank,
-            currencyItem[0].total_volume,
-            currencyItem[0].ath,
-            currencyItem[0].high_24h,
-            currencyItem[0].low_24h,
-            currencyItem[0].circulating_supply,
-            currencyItem[0].total_supply,
-            currencyItem[0].max_supply
-        )
-    }
-
     private fun getCurrencyChartDataPrices(currencyChartData: CurrencyChartData) : List<CurrencyPrice> {
         val currencyPrices = mutableListOf<CurrencyPrice>()
 
@@ -153,6 +109,6 @@ class CryptoFetcher {
             ))
         }
 
-        return currencyPrices
+        return currencyPrices.sortedBy { it.time }
     }
 }

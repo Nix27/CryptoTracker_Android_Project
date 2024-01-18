@@ -25,7 +25,7 @@ import kotlinx.coroutines.withContext
 class CurrenciesFragment : Fragment(), Navigable {
 
     private lateinit var binding: FragmentCurrenciesBinding
-    private val viewModel = CurrenciesViewModel()
+    private val viewModel: CurrenciesViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,6 +46,6 @@ class CurrenciesFragment : Fragment(), Navigable {
     }
 
     override fun navigate(bundle: Bundle) {
-        findNavController().navigate(R.id.action_CurrenciesFragment_to_CurrencyDetailsFragment, bundle)
+        findNavController().navigate(R.id.action_to_CurrencyDetailsFragment, bundle)
     }
 }

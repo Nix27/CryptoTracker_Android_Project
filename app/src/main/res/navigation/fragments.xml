@@ -5,23 +5,33 @@
     app:startDestination="@+id/currenciesFragment"
     android:id="@+id/fragments">
 
+    <action
+        android:id="@+id/action_to_LoginFragment"
+        app:destination="@+id/loginFragment"
+        app:popUpTo="@+id/currenciesFragment"
+        app:popUpToInclusive="false"/>
+
+    <action
+        android:id="@+id/action_to_CurrencyDetailsFragment"
+        app:destination="@+id/currencyDetailsFragment"
+        app:popUpTo="@+id/currenciesFragment"
+        app:popUpToInclusive="false"/>
+
+    <action
+        android:id="@+id/action_to_CurrenciesFragment"
+        app:destination="@+id/currenciesFragment"/>
+
+    <action
+        android:id="@+id/action_to_RegisterFragment"
+        app:destination="@+id/registerFragment"
+        app:popUpTo="@+id/loginFragment"
+        app:popUpToInclusive="false"/>
+
     <fragment
         android:id="@+id/currenciesFragment"
         android:name="hr.algebra.cryptotracker.fragment.CurrenciesFragment"
         android:label="@string/currencies"
-        tools:layout="@layout/fragment_currencies">
-
-        <action
-            android:id="@+id/action_CurrenciesFragment_to_CurrencyDetailsFragment"
-            app:destination="@+id/currencyDetailsFragment"
-            app:popUpTo="@+id/currenciesFragment"
-            app:popUpToInclusive="false"/>
-
-        <action
-            android:id="@+id/action_CurrenciesFragment_to_LoginFragment"
-            app:destination="@+id/loginFragment" />
-
-    </fragment>
+        tools:layout="@layout/fragment_currencies" />
 
     <fragment
         android:id="@+id/aboutFragment"
@@ -33,40 +43,18 @@
         android:id="@+id/currencyDetailsFragment"
         android:name="hr.algebra.cryptotracker.fragment.CurrencyDetailsFragment"
         android:label="@string/currency_details"
-        tools:layout="@layout/fragment_currency_details">
-
-        <action
-            android:id="@+id/action_CurrencyDetailsFragment_to_CurrenciesFragment"
-            app:destination="@+id/currenciesFragment"/>
-
-    </fragment>
+        tools:layout="@layout/fragment_currency_details" />
 
     <fragment
         android:id="@+id/loginFragment"
         android:name="hr.algebra.cryptotracker.fragment.LoginFragment"
         android:label="Login"
-        tools:layout="@layout/fragment_login">
-
-        <action
-            android:id="@+id/action_LoginFragment_to_RegisterFragment"
-            app:destination="@+id/registerFragment"/>
-
-        <action
-            android:id="@+id/action_LoginFragment_to_CurrenciesFragment"
-            app:destination="@+id/currenciesFragment"/>
-
-    </fragment>
+        tools:layout="@layout/fragment_login" />
 
     <fragment
         android:id="@+id/registerFragment"
         android:name="hr.algebra.cryptotracker.fragment.RegisterFragment"
         android:label="Login"
-        tools:layout="@layout/fragment_register">
-
-        <action
-            android:id="@+id/action_RegisterFragment_to_LoginFragment"
-            app:destination="@+id/loginFragment"/>
-
-    </fragment>
+        tools:layout="@layout/fragment_register" />
 
 </navigation>

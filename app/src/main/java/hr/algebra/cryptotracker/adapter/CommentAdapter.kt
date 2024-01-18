@@ -18,7 +18,7 @@ class CommentAdapter(
         private val tvComment = commentView.findViewById<TextView>(R.id.tvComment)
 
         fun bind(comment: Comment) {
-            tvUser.text = comment.text
+            tvUser.text = comment.usernameOfUser
             tvComment.text = comment.text
         }
     }

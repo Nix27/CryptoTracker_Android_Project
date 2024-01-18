@@ -6,26 +6,27 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hr.algebra.cryptotracker.api.CryptoFetcher
 import hr.algebra.cryptotracker.model.Currency
+import hr.algebra.cryptotracker.repository.CurrenciesRepository
+import hr.algebra.cryptotracker.repository.CurrenciesRepositoryImpl
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class CurrenciesViewModel : ViewModel() {
+    private val currenciesRepository: CurrenciesRepository = CurrenciesRepositoryImpl()
     private val _currencies = MutableLiveData<List<Currency>>()
     val currencies: LiveData<List<Currency>> get() = _currencies
 
     init {
         viewModelScope.launch {
-            val currenciesFromApi = CryptoFetcher().fetchCryptoCurrencies("usd", 1)
-            withContext(Dispatchers.Main) {
-                _currencies.value = currenciesFromApi
+            currenciesRepository.getLatestComments().collect { latestCurrencies ->
+                println("fetched latestCurrencies")
+                withContext(Dispatchers.Main) {
+                    _currencies.value = latestCurrencies
+                    println("value changed")
+                }
             }
         }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        // stop refreshing
-    }
-
 }

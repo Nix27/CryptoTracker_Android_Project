@@ -12,6 +12,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import hr.algebra.cryptotracker.api.CryptoFetcher
 import hr.algebra.cryptotracker.databinding.ActivityHostBinding
+import hr.algebra.cryptotracker.framework.getStringPreference
+import hr.algebra.cryptotracker.framework.setStringPreference
 import hr.algebra.cryptotracker.model.Currency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,7 +22,6 @@ const val LOGGED_USER = "hr.algebra.cryptotracker.logged_user"
 
 class HostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHostBinding
-    private lateinit var currencies: List<Currency>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,7 +60,11 @@ class HostActivity : AppCompatActivity() {
                 return true
             }
             R.id.menuUser -> {
-                findNavController(R.id.navigationController).navigate(R.id.action_CurrenciesFragment_to_LoginFragment)
+                if(this.getStringPreference(LOGGED_USER)?.isEmpty() == true) {
+                    findNavController(R.id.navigationController).navigate(R.id.action_to_LoginFragment)
+                } else {
+                    logout()
+                }
                 return true
             }
             R.id.menuExit -> {
@@ -70,13 +75,25 @@ class HostActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun exitApp() {
+    private fun logout() {
         AlertDialog.Builder(this).apply {
-            setTitle(R.string.exit)
+            setTitle(R.string.logout)
             setMessage(getString(R.string.are_you_sure))
             setIcon(R.drawable.exit_icon)
             setCancelable(true)
-            setNegativeButton("Cancel", null)
+            setNegativeButton(getString(R.string.cancel), null)
+            setPositiveButton("Ok") { _, _ -> this@HostActivity.setStringPreference(LOGGED_USER, "") }
+            show()
+        }
+    }
+
+    private fun exitApp() {
+        AlertDialog.Builder(this).apply {
+            setTitle(getString(R.string.logout))
+            setMessage(getString(R.string.are_you_sure))
+            setIcon(R.drawable.exit_icon)
+            setCancelable(true)
+            setNegativeButton(getString(R.string.cancel), null)
             setPositiveButton("Ok") { _, _ -> finish() }
             show()
         }

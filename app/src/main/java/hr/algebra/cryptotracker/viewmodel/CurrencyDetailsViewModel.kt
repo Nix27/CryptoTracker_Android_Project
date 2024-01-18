@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import hr.algebra.cryptotracker.api.CryptoFetcher
+import hr.algebra.cryptotracker.api.MAIN_CURRENCY
 import hr.algebra.cryptotracker.enums.CustomResponse
 import hr.algebra.cryptotracker.model.Comment
 import hr.algebra.cryptotracker.model.Currency
@@ -18,25 +19,14 @@ import kotlinx.coroutines.withContext
 class CurrencyDetailsViewModel : ViewModel() {
     private val commentRepository: CommentRepository = CommentRepositoryImpl()
 
-    private val _currencyDetails = MutableLiveData<Currency>()
     private val _currencyPrices = MutableLiveData<List<CurrencyPrice>>()
-    private val _comments = MutableLiveData<MutableList<Comment>>()
-    val currencyDetails: LiveData<Currency> get() = _currencyDetails
+    private val _comments = MutableLiveData<List<Comment>>()
     val currencyPrices: LiveData<List<CurrencyPrice>> get() = _currencyPrices
-    val comments: LiveData<MutableList<Comment>> get() = _comments
-
-    fun getCurrencyDetails(id: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            val currencyDetailsFromApi = CryptoFetcher().fetchCryptoCurrencyDetails(id, "usd")
-            withContext(Dispatchers.Main) {
-                _currencyDetails.value = currencyDetailsFromApi
-            }
-        }
-    }
+    val comments: LiveData<List<Comment>> get() = _comments
 
     fun getCurrencyPrices(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val currencyPricesFromApi = CryptoFetcher().fetchCurrencyPriceData(id, "usd", 2)
+            val currencyPricesFromApi = CryptoFetcher().fetchCurrencyPriceData(id, MAIN_CURRENCY, 2)
             withContext(Dispatchers.Main) {
                 _currencyPrices.value = currencyPricesFromApi
             }
@@ -45,17 +35,22 @@ class CurrencyDetailsViewModel : ViewModel() {
 
     fun getComments(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            _comments.value = commentRepository.getAllCommentsFor(id)
+            val commentsFromDb = commentRepository.getAllCommentsFor(id)
+            withContext(Dispatchers.Main) {
+                _comments.value = commentsFromDb
+            }
         }
     }
 
-    fun addNewComment(text: String, usernameOfUser: String) {
+    fun addNewComment(currencyId: String, text: String, usernameOfUser: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val newComment = Comment(text = text, usernameOfUser = usernameOfUser)
+            val newComment = Comment(currencyId = currencyId, text = text, usernameOfUser = usernameOfUser)
             val response = commentRepository.addComment(newComment)
             withContext(Dispatchers.Main) {
                 if(response == CustomResponse.SUCCESS) {
-                    _comments.value!!.add(newComment)
+                    val mutableComments = _comments.value!!.toMutableList()
+                    mutableComments.add(newComment)
+                    _comments.value = mutableComments
                 }
             }
         }
