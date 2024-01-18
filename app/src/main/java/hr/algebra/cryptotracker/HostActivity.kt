@@ -16,6 +16,8 @@ import hr.algebra.cryptotracker.model.Currency
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+const val LOGGED_USER = "hr.algebra.cryptotracker.logged_user"
+
 class HostActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHostBinding
     private lateinit var currencies: List<Currency>

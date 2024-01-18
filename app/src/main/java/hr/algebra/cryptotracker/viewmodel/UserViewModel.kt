@@ -4,15 +4,15 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import hr.algebra.cryptotracker.enums.UserResponse
+import hr.algebra.cryptotracker.enums.CustomResponse
 import hr.algebra.cryptotracker.factory.getRepository
 import hr.algebra.cryptotracker.model.User
 import kotlinx.coroutines.launch
 
 class UserViewModel : ViewModel() {
     private val userRepository = getRepository()
-    private val _response = MutableLiveData<UserResponse>()
-    val response: LiveData<UserResponse> get() = _response
+    private val _response = MutableLiveData<CustomResponse>()
+    val response: LiveData<CustomResponse> get() = _response
 
     fun registerUser(username: String, password: String) {
         viewModelScope.launch {

@@ -15,7 +15,7 @@ class CurrenciesViewModel : ViewModel() {
     val currencies: LiveData<List<Currency>> get() = _currencies
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             val currenciesFromApi = CryptoFetcher().fetchCryptoCurrencies("usd", 1)
             withContext(Dispatchers.Main) {
                 _currencies.value = currenciesFromApi

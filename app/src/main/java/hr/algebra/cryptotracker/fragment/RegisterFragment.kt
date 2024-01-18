@@ -7,21 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 import hr.algebra.cryptotracker.R
 import hr.algebra.cryptotracker.databinding.FragmentRegisterBinding
-import hr.algebra.cryptotracker.enums.UserResponse
-import hr.algebra.cryptotracker.model.User
+import hr.algebra.cryptotracker.enums.CustomResponse
 import hr.algebra.cryptotracker.viewmodel.UserViewModel
 
 class RegisterFragment : Fragment() {
 
     private lateinit var binding: FragmentRegisterBinding
-    private val viewModel = UserViewModel()
+    private val userViewModel = UserViewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,10 +28,12 @@ class RegisterFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.response.observe(viewLifecycleOwner) {
-            when(viewModel.response.value) {
-                UserResponse.SUCCESS -> findNavController().navigate(R.id.action_RegisterFragment_to_LoginFragment)
-                else -> Toast.makeText(requireContext(), viewModel.response.value.toString(), Toast.LENGTH_SHORT).show()
+        userViewModel.response.observe(viewLifecycleOwner) {
+            when(userViewModel.response.value) {
+                CustomResponse.SUCCESS -> {
+                    findNavController().navigate(R.id.action_RegisterFragment_to_LoginFragment)
+                }
+                else -> Toast.makeText(requireContext(), userViewModel.response.value!!.name, Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -48,7 +44,7 @@ class RegisterFragment : Fragment() {
             val password = binding.etPassword.text.toString().trim()
 
             if(username.isNotEmpty() && password.isNotEmpty()){
-                viewModel.registerUser(username, password)
+                userViewModel.registerUser(username, password)
             } else {
                 if(username.isEmpty()) binding.etUsername.error = getString(R.string.user_name_is_required)
                 if(password.isEmpty()) binding.etPassword.error = getString(R.string.password_is_required)

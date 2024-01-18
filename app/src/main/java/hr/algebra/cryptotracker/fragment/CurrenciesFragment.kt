@@ -32,19 +32,7 @@ class CurrenciesFragment : Fragment(), Navigable {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentCurrenciesBinding.inflate(inflater, container, false)
-        setupListeners()
         return binding.root
-    }
-
-    private fun setupListeners() {
-        binding.spCurrencyChooser.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(adapterView: AdapterView<*>?, p1: View?, position: Int, p3: Long) {
-                // refresh recycler view
-            }
-
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-            }
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

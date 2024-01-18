@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.AxisBase
 import com.github.mikephil.charting.components.XAxis
@@ -21,6 +22,7 @@ import com.github.mikephil.charting.formatter.ColorFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.squareup.picasso.Picasso
 import hr.algebra.cryptotracker.R
+import hr.algebra.cryptotracker.adapter.CommentAdapter
 import hr.algebra.cryptotracker.databinding.FragmentCurrencyDetailsBinding
 import hr.algebra.cryptotracker.formatter.formatStringTimeToTimeStamp
 import hr.algebra.cryptotracker.model.Currency
@@ -67,6 +69,15 @@ class CurrencyDetailsFragment : Fragment() {
 
         viewModel.currencyPrices.observe(viewLifecycleOwner) {
             if(it != null) setupPriceChart()
+        }
+
+        viewModel.comments.observe(viewLifecycleOwner) {
+            if(it != null) {
+                binding.rvComments.apply {
+                    layoutManager = LinearLayoutManager(requireContext())
+                    adapter = CommentAdapter(requireContext(), it)
+                }
+            }
         }
     }
 

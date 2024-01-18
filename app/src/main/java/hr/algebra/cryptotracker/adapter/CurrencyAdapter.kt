@@ -53,5 +53,4 @@ class CurrencyAdapter(
 
         holder.bind(currencies[position])
     }
-
 }
